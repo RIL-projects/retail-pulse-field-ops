@@ -350,7 +350,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                   <p className="text-sm text-blue-700">Sunita Devi - Casual Leave (Jan 25)</p>
                 </div>
               </TabsContent>
-            </tabs>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
@@ -444,7 +444,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                         <p>• Leave carry-forward: 5 days max</p>
                         <p>• Advance leave: 30 days allowed</p>
                         <p>• Minimum notice: 1 day</p>
-                        <p>• Consecutive leave: Manager approval required for >3 days</p>
+                        <p>• Consecutive leave: Manager approval required for 3+ days</p>
                       </div>
                     </CardContent>
                   </Card>
