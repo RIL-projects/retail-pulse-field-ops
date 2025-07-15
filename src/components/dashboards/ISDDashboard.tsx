@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -19,16 +18,24 @@ import {
   AlertCircle,
   DollarSign,
   Package,
-  Trophy
+  Trophy,
+  ShoppingCart,
+  FileText,
+  BarChart3
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import AttendanceFlow from '@/components/flows/AttendanceFlow';
+import SalesFlow from '@/components/flows/SalesFlow';
+import DisplayFlow from '@/components/flows/DisplayFlow';
+import PerformanceFlow from '@/components/flows/PerformanceFlow';
 
 const ISDDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState('Not Checked In');
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [activeFlow, setActiveFlow] = useState<string | null>(null);
 
   const handleMarkAttendance = () => {
     if (!isCheckedIn) {
@@ -70,6 +77,50 @@ const ISDDashboard = () => {
     { id: 3, type: 'display', status: 'completed', time: '02:15 PM', description: 'Display tracking updated' }
   ];
 
+  if (activeFlow) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-3">
+                <Button variant="outline" size="sm" onClick={() => setActiveFlow(null)}>
+                  ← Back to Dashboard
+                </Button>
+                <div>
+                  <h1 className="text-lg font-semibold text-gray-900">Welcome, {user?.name}</h1>
+                  <p className="text-sm text-gray-500">{user?.description}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Badge variant={isCheckedIn ? "default" : "secondary"}>
+                  {attendanceStatus}
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {activeFlow === 'attendance' && <AttendanceFlow userRole="ISD" />}
+          {activeFlow === 'sales' && <SalesFlow userRole="ISD" />}
+          {activeFlow === 'display' && <DisplayFlow userRole="ISD" />}
+          {activeFlow === 'performance' && <PerformanceFlow userRole="ISD" />}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -105,58 +156,51 @@ const ISDDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-md transition-shadow">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('attendance')}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Mark Attendance</h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {isCheckedIn ? 'Check out when leaving' : 'Check in to start your day'}
-                  </p>
+                  <h3 className="font-semibold text-gray-900">Attendance</h3>
+                  <p className="text-sm text-gray-500 mt-1">Mark attendance & apply for leave</p>
                 </div>
-                <Button
-                  onClick={handleMarkAttendance}
-                  size="sm"
-                  className={`flex items-center gap-2 ${
-                    isCheckedIn 
-                      ? 'bg-red-600 hover:bg-red-700' 
-                      : 'bg-green-600 hover:bg-green-700'
-                  }`}
-                >
-                  <Camera className="w-4 h-4" />
-                  {isCheckedIn ? 'Check Out' : 'Check In'}
-                </Button>
+                <Camera className="w-8 h-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('sales')}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Record Sale</h3>
-                  <p className="text-sm text-gray-500 mt-1">Log your sales transactions</p>
+                  <h3 className="font-semibold text-gray-900">Sales Entry</h3>
+                  <p className="text-sm text-gray-500 mt-1">Record sales & track approvals</p>
                 </div>
-                <Button size="sm" className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4" />
-                  Add Sale
-                </Button>
+                <ShoppingCart className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('display')}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Update Display</h3>
-                  <p className="text-sm text-gray-500 mt-1">Track product displays</p>
+                  <h3 className="font-semibold text-gray-900">Display Tracking</h3>
+                  <p className="text-sm text-gray-500 mt-1">Update product displays</p>
                 </div>
-                <Button size="sm" variant="outline" className="flex items-center gap-2">
-                  <Package className="w-4 h-4" />
-                  Update
-                </Button>
+                <Package className="w-8 h-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('performance')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">My Performance</h3>
+                  <p className="text-sm text-gray-500 mt-1">Track targets & achievements</p>
+                </div>
+                <BarChart3 className="w-8 h-8 text-orange-600" />
               </div>
             </CardContent>
           </Card>

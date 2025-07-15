@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,14 +17,23 @@ import {
   Calendar,
   Target,
   MapPin,
-  Building2
+  Building2,
+  UserCheck,
+  Clock,
+  Package,
+  FileText
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import AttendanceFlow from '@/components/flows/AttendanceFlow';
+import SalesFlow from '@/components/flows/SalesFlow';
+import DisplayFlow from '@/components/flows/DisplayFlow';
+import PerformanceFlow from '@/components/flows/PerformanceFlow';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [activeFlow, setActiveFlow] = useState<string | null>(null);
 
   const handleLogout = () => {
     logout();
@@ -56,6 +64,50 @@ const AdminDashboard = () => {
     { region: 'West India', isds: 55, targetAchievement: 88, attendanceRate: 91 },
     { region: 'East India', isds: 50, targetAchievement: 79, attendanceRate: 93 }
   ];
+
+  if (activeFlow) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-3">
+                <Button variant="outline" size="sm" onClick={() => setActiveFlow(null)}>
+                  ← Back to Dashboard
+                </Button>
+                <div>
+                  <h1 className="text-lg font-semibold text-gray-900">Welcome, {user?.name}</h1>
+                  <p className="text-sm text-gray-500">{user?.description}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                  System Administrator
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {activeFlow === 'attendance' && <AttendanceFlow userRole="Admin" />}
+          {activeFlow === 'sales' && <SalesFlow userRole="Admin" />}
+          {activeFlow === 'display' && <DisplayFlow userRole="Admin" />}
+          {activeFlow === 'performance' && <PerformanceFlow userRole="Admin" />}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -91,6 +143,57 @@ const AdminDashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Admin Modules */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('attendance')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Attendance Config</h3>
+                  <p className="text-sm text-gray-500 mt-1">Policies & shift management</p>
+                </div>
+                <Clock className="w-8 h-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('sales')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Sales & Targets</h3>
+                  <p className="text-sm text-gray-500 mt-1">Target configuration & analysis</p>
+                </div>
+                <Target className="w-8 h-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('display')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Display Norms</h3>
+                  <p className="text-sm text-gray-500 mt-1">Configure display standards</p>
+                </div>
+                <Package className="w-8 h-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('performance')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Analytics</h3>
+                  <p className="text-sm text-gray-500 mt-1">System-wide insights</p>
+                </div>
+                <BarChart3 className="w-8 h-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* System Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
