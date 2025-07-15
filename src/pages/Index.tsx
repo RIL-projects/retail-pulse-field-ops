@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Users, UserCheck, Settings, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [username, setUsername] = useState('');
@@ -15,6 +15,7 @@ const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const demoAccounts = [
     {
@@ -54,17 +55,19 @@ const Index = () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Store user data in localStorage
+    // Find user data
     const userData = demoUser || demoAccounts.find(acc => 
       acc.username === username && acc.password === password
     );
     
     if (userData) {
-      localStorage.setItem('user', JSON.stringify(userData));
+      // Use the AuthContext login method
+      login(userData);
       toast({
         title: "Login Successful",
         description: `Welcome back, ${userData.name}!`,
       });
+      // Navigate to dashboard - the Dashboard component will handle role-based routing
       navigate('/dashboard');
     } else {
       toast({
