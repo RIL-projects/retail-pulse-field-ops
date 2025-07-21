@@ -19,7 +19,8 @@ import {
   Target,
   FileText,
   BarChart3,
-  Package
+  Package,
+  Receipt
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ import AttendanceFlow from '@/components/flows/AttendanceFlow';
 import SalesFlow from '@/components/flows/SalesFlow';
 import DisplayFlow from '@/components/flows/DisplayFlow';
 import PerformanceFlow from '@/components/flows/PerformanceFlow';
+import ExpenseClaimFlow from '@/components/flows/ExpenseClaimFlow';
 
 const ManagerDashboard = () => {
   const { user, logout } = useAuth();
@@ -61,7 +63,7 @@ const ManagerDashboard = () => {
   const pendingApprovals = [
     { id: '1', isd: 'Rahul Kumar', type: 'Leave Request', details: 'Sick Leave - 2 days', date: '2024-01-15', status: 'pending' },
     { id: '2', isd: 'Sunita Devi', type: 'Sales Entry', details: 'TV Sale - ₹85,000', date: '2024-01-14', status: 'pending' },
-    { id: '3', isd: 'Amit Sharma', type: 'Sales Entry', details: 'Refrigerator - ₹45,000', date: '2024-01-14', status: 'pending' }
+    { id: '3', isd: 'Amit Sharma', type: 'Attendance Regularization', details: 'Missed check-in on Jan 12', date: '2024-01-14', status: 'pending' }
   ];
 
   const teamPerformance = [
@@ -110,6 +112,7 @@ const ManagerDashboard = () => {
           {activeFlow === 'sales' && <SalesFlow userRole="Manager" />}
           {activeFlow === 'display' && <DisplayFlow userRole="Manager" />}
           {activeFlow === 'performance' && <PerformanceFlow userRole="Manager" />}
+          {activeFlow === 'expenses' && <ExpenseClaimFlow userRole="Manager" />}
         </div>
       </div>
     );
@@ -150,7 +153,7 @@ const ManagerDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Management Modules */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('attendance')}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -195,6 +198,18 @@ const ManagerDashboard = () => {
                   <p className="text-sm text-gray-500 mt-1">Track team targets</p>
                 </div>
                 <BarChart3 className="w-8 h-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('expenses')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Travel Claims</h3>
+                  <p className="text-sm text-gray-500 mt-1">Submit expense claims</p>
+                </div>
+                <Receipt className="w-8 h-8 text-indigo-600" />
               </div>
             </CardContent>
           </Card>
@@ -305,7 +320,7 @@ const ManagerDashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Today's Attendance</CardTitle>
-                <CardDescription>Real-time attendance status of your team</CardDescription>
+                <CardDescription>Real-time attendance status with new flexible policies</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -315,6 +330,7 @@ const ManagerDashboard = () => {
                       <TableHead>Store</TableHead>
                       <TableHead>Check-in Time</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Weekly Hours</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -323,24 +339,28 @@ const ManagerDashboard = () => {
                       <TableCell>Electronics Hub</TableCell>
                       <TableCell>09:00 AM</TableCell>
                       <TableCell><Badge className="bg-green-100 text-green-800">Present</Badge></TableCell>
+                      <TableCell><span className="text-green-600">38.5/40h</span></TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">Sunita Devi</TableCell>
                       <TableCell>Tech World</TableCell>
                       <TableCell>08:55 AM</TableCell>
                       <TableCell><Badge className="bg-green-100 text-green-800">Present</Badge></TableCell>
+                      <TableCell><span className="text-green-600">40/40h</span></TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">Amit Sharma</TableCell>
                       <TableCell>Digital Plaza</TableCell>
                       <TableCell>09:15 AM</TableCell>
                       <TableCell><Badge className="bg-yellow-100 text-yellow-800">Late</Badge></TableCell>
+                      <TableCell><span className="text-orange-600">35/40h</span></TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">Priya Singh</TableCell>
                       <TableCell>Mega Store</TableCell>
                       <TableCell>-</TableCell>
                       <TableCell><Badge className="bg-red-100 text-red-800">Absent</Badge></TableCell>
+                      <TableCell><span className="text-red-600">28/40h</span></TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -397,8 +417,8 @@ const ManagerDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Attendance Report</div>
-                      <div className="text-sm text-gray-500">Monthly attendance summary</div>
+                      <div className="font-medium">Flexible Attendance Report</div>
+                      <div className="text-sm text-gray-500">Hours-based attendance summary</div>
                     </div>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 justify-start">
@@ -409,14 +429,14 @@ const ManagerDashboard = () => {
                   </Button>
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Target Analysis</div>
-                      <div className="text-sm text-gray-500">Target vs achievement report</div>
+                      <div className="font-medium">Regularization Report</div>
+                      <div className="text-sm text-gray-500">Attendance correction requests</div>
                     </div>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Display Compliance</div>
-                      <div className="text-sm text-gray-500">Store display tracking report</div>
+                      <div className="font-medium">Travel Expense Report</div>
+                      <div className="text-sm text-gray-500">Manager expense claims summary</div>
                     </div>
                   </Button>
                 </div>

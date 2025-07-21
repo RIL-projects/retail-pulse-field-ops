@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -5,23 +6,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
-  Settings, 
+  Shield, 
   Users, 
   TrendingUp, 
-  Database,
+  Clock, 
+  DollarSign,
   LogOut,
-  Upload,
-  Download,
-  BarChart3,
-  Calendar,
-  Target,
-  MapPin,
-  Building2,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
   UserCheck,
-  Clock,
+  Target,
+  FileText,
+  BarChart3,
   Package,
-  FileText
+  Receipt,
+  Settings
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +31,7 @@ import AttendanceFlow from '@/components/flows/AttendanceFlow';
 import SalesFlow from '@/components/flows/SalesFlow';
 import DisplayFlow from '@/components/flows/DisplayFlow';
 import PerformanceFlow from '@/components/flows/PerformanceFlow';
+import ExpenseClaimFlow from '@/components/flows/ExpenseClaimFlow';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -46,24 +49,12 @@ const AdminDashboard = () => {
 
   // Mock data
   const systemStats = {
-    totalISDs: 245,
-    totalManagers: 28,
-    totalStores: 180,
-    overallTargetAchievement: 82
+    totalUsers: 150,
+    activeManagers: 25,
+    activeISDs: 120,
+    pendingExpenseClaims: 8,
+    monthlyExpenseTotal: 250000
   };
-
-  const recentActivities = [
-    { action: 'Bulk Target Upload', user: 'Admin', time: '2 hours ago', status: 'completed' },
-    { action: 'New Store Added', user: 'Admin', time: '1 day ago', status: 'completed' },
-    { action: 'Leave Policy Update', user: 'Admin', time: '2 days ago', status: 'completed' }
-  ];
-
-  const regionalPerformance = [
-    { region: 'North India', isds: 68, targetAchievement: 85, attendanceRate: 94 },
-    { region: 'South India', isds: 72, targetAchievement: 78, attendanceRate: 96 },
-    { region: 'West India', isds: 55, targetAchievement: 88, attendanceRate: 91 },
-    { region: 'East India', isds: 50, targetAchievement: 79, attendanceRate: 93 }
-  ];
 
   if (activeFlow) {
     return (
@@ -82,7 +73,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                   System Administrator
                 </Badge>
                 <Button
@@ -104,6 +95,7 @@ const AdminDashboard = () => {
           {activeFlow === 'sales' && <SalesFlow userRole="Admin" />}
           {activeFlow === 'display' && <DisplayFlow userRole="Admin" />}
           {activeFlow === 'performance' && <PerformanceFlow userRole="Admin" />}
+          {activeFlow === 'expenses' && <ExpenseClaimFlow userRole="Admin" />}
         </div>
       </div>
     );
@@ -116,8 +108,8 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                <Settings className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-gray-900">Welcome, {user?.name}</h1>
@@ -125,7 +117,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                 System Administrator
               </Badge>
               <Button
@@ -143,14 +135,14 @@ const AdminDashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Admin Modules */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Admin Control Modules */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('attendance')}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Attendance Config</h3>
-                  <p className="text-sm text-gray-500 mt-1">Policies & shift management</p>
+                  <h3 className="font-semibold text-gray-900">Attendance System</h3>
+                  <p className="text-sm text-gray-500 mt-1">Configure policies</p>
                 </div>
                 <Clock className="w-8 h-8 text-blue-600" />
               </div>
@@ -161,10 +153,10 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Sales & Targets</h3>
-                  <p className="text-sm text-gray-500 mt-1">Target configuration & analysis</p>
+                  <h3 className="font-semibold text-gray-900">Sales Management</h3>
+                  <p className="text-sm text-gray-500 mt-1">System configuration</p>
                 </div>
-                <Target className="w-8 h-8 text-green-600" />
+                <DollarSign className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
@@ -173,8 +165,8 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Display Norms</h3>
-                  <p className="text-sm text-gray-500 mt-1">Configure display standards</p>
+                  <h3 className="font-semibold text-gray-900">Display Compliance</h3>
+                  <p className="text-sm text-gray-500 mt-1">Monitor all stores</p>
                 </div>
                 <Package className="w-8 h-8 text-purple-600" />
               </div>
@@ -185,23 +177,35 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Analytics</h3>
-                  <p className="text-sm text-gray-500 mt-1">System-wide insights</p>
+                  <h3 className="font-semibold text-gray-900">Performance Analytics</h3>
+                  <p className="text-sm text-gray-500 mt-1">System-wide reports</p>
                 </div>
                 <BarChart3 className="w-8 h-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('expenses')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Expense Claims</h3>
+                  <p className="text-sm text-gray-500 mt-1">Approve manager claims</p>
+                </div>
+                <Receipt className="w-8 h-8 text-indigo-600" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* System Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total ISDs</p>
-                  <p className="text-2xl font-bold text-gray-900">{systemStats.totalISDs}</p>
+                  <p className="text-sm font-medium text-gray-600">Total Users</p>
+                  <p className="text-2xl font-bold text-gray-900">{systemStats.totalUsers}</p>
                 </div>
                 <Users className="w-8 h-8 text-blue-600" />
               </div>
@@ -212,10 +216,10 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Managers</p>
-                  <p className="text-2xl font-bold text-green-600">{systemStats.totalManagers}</p>
+                  <p className="text-sm font-medium text-gray-600">Active Managers</p>
+                  <p className="text-2xl font-bold text-green-600">{systemStats.activeManagers}</p>
                 </div>
-                <Building2 className="w-8 h-8 text-green-600" />
+                <UserCheck className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
@@ -224,22 +228,34 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Stores</p>
-                  <p className="text-2xl font-bold text-orange-600">{systemStats.totalStores}</p>
-                </div>
-                <MapPin className="w-8 h-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Overall Target</p>
-                  <p className="text-2xl font-bold text-purple-600">{systemStats.overallTargetAchievement}%</p>
+                  <p className="text-sm font-medium text-gray-600">Active ISDs</p>
+                  <p className="text-2xl font-bold text-purple-600">{systemStats.activeISDs}</p>
                 </div>
                 <Target className="w-8 h-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Pending Claims</p>
+                  <p className="text-2xl font-bold text-orange-600">{systemStats.pendingExpenseClaims}</p>
+                </div>
+                <FileText className="w-8 h-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Monthly Expenses</p>
+                  <p className="text-xl font-bold text-indigo-600">₹{(systemStats.monthlyExpenseTotal / 1000).toFixed(0)}K</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-indigo-600" />
               </div>
             </CardContent>
           </Card>
@@ -247,220 +263,209 @@ const AdminDashboard = () => {
 
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="configuration">Configuration</TabsTrigger>
-            <TabsTrigger value="bulk-ops">Bulk Operations</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
+            <TabsTrigger value="overview">System Overview</TabsTrigger>
+            <TabsTrigger value="expenses">Expense Claims</TabsTrigger>
+            <TabsTrigger value="attendance">Attendance Policies</TabsTrigger>
+            <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="reports">System Reports</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Regional Performance</CardTitle>
-                  <CardDescription>Performance overview across all regions</CardDescription>
+                  <CardTitle>Recent System Activity</CardTitle>
+                  <CardDescription>Latest activities across the FFA system</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {regionalPerformance.map((region) => (
-                      <div key={region.region} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium">{region.region}</span>
-                          <span className="text-sm text-gray-500">{region.isds} ISDs</span>
-                        </div>
-                        <Progress value={region.targetAchievement} className="h-2" />
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>Target: {region.targetAchievement}%</span>
-                          <span>Attendance: {region.attendanceRate}%</span>
-                        </div>
+                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <div>
+                        <p className="text-sm font-medium">New Manager Expense Claim</p>
+                        <p className="text-xs text-gray-500">John Smith submitted ₹25,000 travel claim</p>
                       </div>
-                    ))}
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                      <UserCheck className="w-5 h-5 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-medium">Attendance Policy Updated</p>
+                        <p className="text-xs text-gray-500">Flexible attendance rules now active</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
+                      <AlertTriangle className="w-5 h-5 text-orange-600" />
+                      <div>
+                        <p className="text-sm font-medium">Regularization Requests</p>
+                        <p className="text-xs text-gray-500">23 pending attendance regularizations</p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent System Activities</CardTitle>
-                  <CardDescription>Latest administrative actions</CardDescription>
+                  <CardTitle>System Health</CardTitle>
+                  <CardDescription>Overall system performance metrics</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {recentActivities.map((activity, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="text-sm font-medium">{activity.action}</p>
-                          <p className="text-xs text-gray-500">by {activity.user} • {activity.time}</p>
-                        </div>
-                        <Badge className="bg-green-100 text-green-800">
-                          {activity.status}
-                        </Badge>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>User Engagement</span>
+                        <span>87%</span>
                       </div>
-                    ))}
+                      <Progress value={87} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Attendance Compliance</span>
+                        <span>92%</span>
+                      </div>
+                      <Progress value={92} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Sales Target Achievement</span>
+                        <span>78%</span>
+                      </div>
+                      <Progress value={78} className="h-2" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="configuration" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Users className="w-6 h-6 text-blue-600" />
-                    <h3 className="font-semibold">User Management</h3>
-                  </div>
-                  <p className="text-sm text-gray-600">Manage ISDs, Managers, and Admin users</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Calendar className="w-6 h-6 text-green-600" />
-                    <h3 className="font-semibold">Shift & Leave Policies</h3>
-                  </div>
-                  <p className="text-sm text-gray-600">Configure attendance rules and leave policies</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Target className="w-6 h-6 text-purple-600" />
-                    <h3 className="font-semibold">Target Configuration</h3>
-                  </div>
-                  <p className="text-sm text-gray-600">Set sales targets and incentive rules</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <MapPin className="w-6 h-6 text-orange-600" />
-                    <h3 className="font-semibold">Store Management</h3>
-                  </div>
-                  <p className="text-sm text-gray-600">Manage store locations and geofencing</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Database className="w-6 h-6 text-red-600" />
-                    <h3 className="font-semibold">Product Master</h3>
-                  </div>
-                  <p className="text-sm text-gray-600">Maintain product catalog and categories</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <BarChart3 className="w-6 h-6 text-indigo-600" />
-                    <h3 className="font-semibold">Display Norms</h3>
-                  </div>
-                  <p className="text-sm text-gray-600">Configure display compliance rules</p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="bulk-ops" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Upload className="w-5 h-5" />
-                    Bulk Upload Operations
-                  </CardTitle>
-                  <CardDescription>Upload data in bulk using CSV/Excel files</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload ISD-Store Mappings
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Manager-Team Mappings
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Sales Targets
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Product Master Data
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Download className="w-5 h-5" />
-                    Data Export Operations
-                  </CardTitle>
-                  <CardDescription>Export system data for analysis</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export User Database
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Store Mappings
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Target Configurations
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Product Catalog
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-6">
+          <TabsContent value="expenses" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>System Analytics & Insights</CardTitle>
-                <CardDescription>Data-driven insights across all operations</CardDescription>
+                <CardTitle>Manager Expense Claims - Pending Approval</CardTitle>
+                <CardDescription>Review and approve manager travel expense claims</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium text-blue-900">Attendance vs Performance</h4>
-                    <p className="text-sm text-blue-700 mt-1">Correlation analysis available</p>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-3 bg-orange-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">{systemStats.pendingExpenseClaims}</div>
+                      <div className="text-sm text-gray-600">Pending Claims</div>
+                    </div>
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">42</div>
+                      <div className="text-sm text-gray-600">Approved This Month</div>
+                    </div>
+                    <div className="text-center p-3 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">₹{(systemStats.monthlyExpenseTotal / 1000).toFixed(0)}K</div>
+                      <div className="text-sm text-gray-600">Total Monthly Expenses</div>
+                    </div>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <h4 className="font-medium text-green-900">Top Performers</h4>
-                    <p className="text-sm text-green-700 mt-1">85% target achievement rate</p>
+
+                  <Button onClick={() => setActiveFlow('expenses')} className="w-full">
+                    <Receipt className="w-4 h-4 mr-2" />
+                    Review Pending Expense Claims
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="attendance" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>New Attendance Policy Configuration</CardTitle>
+                <CardDescription>Manage flexible attendance rules and regularization settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Active Policies</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                        <span className="text-sm">Flexible Hours Policy</span>
+                        <Badge>Active</Badge>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                        <span className="text-sm">Late After 1PM Rule</span>
+                        <Badge>Active</Badge>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                        <span className="text-sm">3h 45m Minimum Rule</span>
+                        <Badge>Active</Badge>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                        <span className="text-sm">Regularization (5/month)</span>
+                        <Badge>Active</Badge>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-4 bg-purple-50 rounded-lg">
-                    <h4 className="font-medium text-purple-900">Product Contribution</h4>
-                    <p className="text-sm text-purple-700 mt-1">TV category leading at 45%</p>
-                  </div>
-                  <div className="p-4 bg-orange-50 rounded-lg">
-                    <h4 className="font-medium text-orange-900">Display Compliance</h4>
-                    <p className="text-sm text-orange-700 mt-1">78% stores fully compliant</p>
-                  </div>
-                  <div className="p-4 bg-red-50 rounded-lg">
-                    <h4 className="font-medium text-red-900">Regional Trends</h4>
-                    <p className="text-sm text-red-700 mt-1">West region outperforming</p>
-                  </div>
-                  <div className="p-4 bg-indigo-50 rounded-lg">
-                    <h4 className="font-medium text-indigo-900">Forecasting</h4>
-                    <p className="text-sm text-indigo-700 mt-1">Q1 targets on track</p>
+                  
+                  <div className="space-y-4">
+                    <h4 className="font-medium">System Stats</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Regularization Requests</span>
+                        <span className="font-medium">23 pending</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Weekly Hour Deficits</span>
+                        <span className="font-medium">12 employees</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Late Arrivals (>1PM)</span>
+                        <span className="font-medium">8 this week</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div className="mt-6">
+                  <Button onClick={() => setActiveFlow('attendance')} className="w-full">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Configure Attendance Policies
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>Manage system users and roles</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Active Users</TableHead>
+                      <TableHead>New This Month</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Administrators</TableCell>
+                      <TableCell>5</TableCell>
+                      <TableCell>0</TableCell>
+                      <TableCell><Badge>Active</Badge></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Managers</TableCell>
+                      <TableCell>{systemStats.activeManagers}</TableCell>
+                      <TableCell>2</TableCell>
+                      <TableCell><Badge>Active</Badge></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">ISDs</TableCell>
+                      <TableCell>{systemStats.activeISDs}</TableCell>
+                      <TableCell>15</TableCell>
+                      <TableCell><Badge>Active</Badge></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
@@ -469,44 +474,32 @@ const AdminDashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>System Reports</CardTitle>
-                <CardDescription>Generate comprehensive reports across all modules</CardDescription>
+                <CardDescription>Generate comprehensive system reports</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Global Attendance Report</div>
-                      <div className="text-sm text-gray-500">All ISDs attendance summary</div>
+                      <div className="font-medium">Expense Claims Report</div>
+                      <div className="text-sm text-gray-500">Manager travel expenses and approvals</div>
                     </div>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Comprehensive Sales Report</div>
-                      <div className="text-sm text-gray-500">All sales entries and approvals</div>
+                      <div className="font-medium">Attendance Analytics</div>
+                      <div className="text-sm text-gray-500">Flexible attendance policy impact</div>
                     </div>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Target Achievement Report</div>
-                      <div className="text-sm text-gray-500">System-wide target analysis</div>
+                      <div className="font-medium">Regularization Trends</div>
+                      <div className="text-sm text-gray-500">Usage patterns and approval rates</div>
                     </div>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 justify-start">
                     <div className="text-left">
-                      <div className="font-medium">Display Compliance Report</div>
-                      <div className="text-sm text-gray-500">Store-wise display tracking</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Incentive Eligibility Report</div>
-                      <div className="text-sm text-gray-500">ISDs eligible for incentives</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Manager Performance Report</div>
-                      <div className="text-sm text-gray-500">Team management effectiveness</div>
+                      <div className="font-medium">System Performance</div>
+                      <div className="text-sm text-gray-500">Overall FFA system metrics</div>
                     </div>
                   </Button>
                 </div>
