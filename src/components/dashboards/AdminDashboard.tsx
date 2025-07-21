@@ -412,7 +412,7 @@ const AdminDashboard = () => {
                         <span className="font-medium">12 employees</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Late Arrivals (>1PM)</span>
+                        <span className="text-sm text-gray-600">Late Arrivals ({">"}1PM)</span>
                         <span className="font-medium">8 this week</span>
                       </div>
                     </div>

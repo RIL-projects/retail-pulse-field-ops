@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -466,7 +467,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                               <span>Weekly: {member.weeklyHours}</span>
                               {member.lateCount > 0 && (
                                 <span className="text-orange-600">
-                                  Late >1PM: {member.lateCount} this week
+                                  Late {">"}1PM: {member.lateCount} this week
                                 </span>
                               )}
                             </div>
