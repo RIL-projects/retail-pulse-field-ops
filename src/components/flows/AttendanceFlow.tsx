@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Clock, 
   CheckCircle, 
@@ -16,9 +18,14 @@ import {
   Plus,
   Calendar,
   TrendingUp,
-  Settings
+  Settings,
+  Camera,
+  MapPin,
+  Wifi,
+  WifiOff
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import AttendanceRegularizationFlow from './AttendanceRegularizationFlow';
 
 interface AttendanceFlowProps {
   userRole: 'ISD' | 'Manager' | 'Admin';
@@ -27,6 +34,14 @@ interface AttendanceFlowProps {
 const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showRegularization, setShowRegularization] = useState(false);
+  const [showLeaveForm, setShowLeaveForm] = useState(false);
+  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [leaveType, setLeaveType] = useState('');
+  const [leaveReason, setLeaveReason] = useState('');
+  const [leaveFromDate, setLeaveFromDate] = useState('');
+  const [leaveToDate, setLeaveToDate] = useState('');
 
   const handleApproval = (id: string, action: 'approve' | 'reject') => {
     toast({
@@ -37,6 +52,92 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
 
   const handleRegularization = () => {
     setShowRegularization(true);
+  };
+
+  const handleGeofencedCheckin = () => {
+    // Check if geolocation is available
+    if (!navigator.geolocation) {
+      toast({
+        title: "Location Not Supported",
+        description: "Geolocation is not supported by this browser.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Get current location
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        setIsLocationEnabled(true);
+        
+        // Simulate geofence check (in real app, this would be validated against store coordinates)
+        const isInGeofence = Math.random() > 0.3; // 70% chance of being in geofence for demo
+        
+        if (isInGeofence) {
+          setShowCamera(true);
+          toast({
+            title: "Location Verified",
+            description: "You are within the store premises. Please take a selfie to check in.",
+          });
+        } else {
+          toast({
+            title: "Location Error",
+            description: "You are not within the store premises. Please move closer to the store.",
+            variant: "destructive"
+          });
+        }
+      },
+      (error) => {
+        toast({
+          title: "Location Error",
+          description: "Unable to get your location. Please enable location services.",
+          variant: "destructive"
+        });
+      }
+    );
+  };
+
+  const handleSelfieCapture = () => {
+    // Simulate selfie capture
+    setShowCamera(false);
+    toast({
+      title: "Attendance Marked",
+      description: "Selfie captured successfully. You have been checked in!",
+    });
+  };
+
+  const handleLeaveApplication = () => {
+    if (!leaveType || !leaveFromDate || !leaveToDate || !leaveReason.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (leaveFromDate > leaveToDate) {
+      toast({
+        title: "Invalid Dates",
+        description: "From date cannot be after to date.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Leave Applied",
+      description: "Your leave application has been submitted for approval.",
+    });
+
+    // Reset form
+    setLeaveType('');
+    setLeaveFromDate('');
+    setLeaveToDate('');
+    setLeaveReason('');
+    setShowLeaveForm(false);
   };
 
   // Mock data
@@ -93,6 +194,19 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
     { id: '3', isd: 'Amit Sharma', date: '2024-01-13', reason: 'Vehicle breakdown', status: 'Pending', checkIn: '09:45 AM' }
   ];
 
+  const leaveBalance = {
+    casual: 8,
+    sick: 12,
+    annual: 15,
+    personal: 5
+  };
+
+  const leaveHistory = [
+    { id: '1', type: 'Casual', fromDate: '2024-01-10', toDate: '2024-01-12', days: 3, status: 'Approved', reason: 'Personal work' },
+    { id: '2', type: 'Sick', fromDate: '2024-01-08', toDate: '2024-01-08', days: 1, status: 'Approved', reason: 'Fever' },
+    { id: '3', type: 'Annual', fromDate: '2024-01-20', toDate: '2024-01-22', days: 3, status: 'Pending', reason: 'Family vacation' }
+  ];
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Present': return 'bg-green-100 text-green-800';
@@ -108,6 +222,21 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
     return 'text-red-600';
   };
 
+  if (showRegularization) {
+    return (
+      <div className="space-y-4">
+        <Button 
+          variant="outline" 
+          onClick={() => setShowRegularization(false)}
+          className="mb-4"
+        >
+          ← Back to Attendance
+        </Button>
+        <AttendanceRegularizationFlow userRole={userRole} />
+      </div>
+    );
+  }
+
   if (userRole === 'ISD') {
     return (
       <div className="space-y-6">
@@ -122,65 +251,242 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">38.5h</div>
-                <div className="text-sm text-gray-600">This Week</div>
-              </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">2/5</div>
-                <div className="text-sm text-gray-600">Regularizations Used</div>
-              </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">1</div>
-                <div className="text-sm text-gray-600">Late Compensations</div>
-              </div>
-            </div>
+            <Tabs defaultValue="checkin" className="space-y-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="checkin">Check In/Out</TabsTrigger>
+                <TabsTrigger value="regularization">Regularization</TabsTrigger>
+                <TabsTrigger value="leaves">Leave Management</TabsTrigger>
+              </TabsList>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Today's Status</h3>
-                <Badge className="bg-green-100 text-green-800">Present</Badge>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg">
-                  <div className="text-sm text-gray-600">Check In</div>
-                  <div className="text-lg font-semibold">09:00 AM</div>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <div className="text-sm text-gray-600">Expected Check Out</div>
-                  <div className="text-lg font-semibold">06:30 PM</div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h4 className="font-medium mb-3">Attendance Policy Reminders</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Flexible hours: Work anytime, minimum 3h 45m daily</span>
+              <TabsContent value="checkin" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">38.5h</div>
+                    <div className="text-sm text-gray-600">This Week</div>
                   </div>
-                  <div className="flex items-center gap-2 text-orange-600">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>Late arrival: After 1 PM requires extra time next day</span>
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">2/5</div>
+                    <div className="text-sm text-gray-600">Regularizations Used</div>
                   </div>
-                  <div className="flex items-center gap-2 text-green-600">
-                    <FileText className="w-4 h-4" />
-                    <span>Regularization: 5 requests available per month</span>
+                  <div className="text-center p-4 bg-orange-50 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">1</div>
+                    <div className="text-sm text-gray-600">Late Compensations</div>
                   </div>
                 </div>
-              </div>
 
-              <Button 
-                onClick={handleRegularization}
-                className="w-full mt-4"
-                variant="outline"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Request Attendance Regularization
-              </Button>
-            </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Today's Status</h3>
+                    <Badge className="bg-green-100 text-green-800">Present</Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 border rounded-lg">
+                      <div className="text-sm text-gray-600">Check In</div>
+                      <div className="text-lg font-semibold">09:00 AM</div>
+                    </div>
+                    <div className="p-4 border rounded-lg">
+                      <div className="text-sm text-gray-600">Expected Check Out</div>
+                      <div className="text-lg font-semibold">06:30 PM</div>
+                    </div>
+                  </div>
+
+                  {/* Geofenced Check-in Section */}
+                  <Card className="border-2 border-dashed">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Camera className="w-5 h-5" />
+                        Geofenced Selfie Check-in
+                      </CardTitle>
+                      <CardDescription>
+                        Use location and selfie verification to mark attendance
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center gap-2 text-sm">
+                        {isLocationEnabled ? (
+                          <Wifi className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <WifiOff className="w-4 h-4 text-red-500" />
+                        )}
+                        <span>Location: {currentLocation || 'Not detected'}</span>
+                      </div>
+                      
+                      {showCamera ? (
+                        <div className="space-y-4">
+                          <div className="bg-gray-100 h-48 flex items-center justify-center rounded-lg">
+                            <div className="text-center">
+                              <Camera className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                              <p className="text-sm text-gray-600">Camera feed would appear here</p>
+                              <p className="text-xs text-gray-500">Position yourself in the frame</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button onClick={handleSelfieCapture} className="flex-1">
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Capture Selfie
+                            </Button>
+                            <Button variant="outline" onClick={() => setShowCamera(false)} className="flex-1">
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button onClick={handleGeofencedCheckin} className="w-full">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          Start Geofenced Check-in
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <div className="mt-6">
+                    <h4 className="font-medium mb-3">Attendance Policy Reminders</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 text-blue-600">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Flexible hours: Work anytime, minimum 3h 45m daily</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-orange-600">
+                        <AlertTriangle className="w-4 h-4" />
+                        <span>Late arrival: After 1 PM requires extra time next day</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-green-600">
+                        <FileText className="w-4 h-4" />
+                        <span>Regularization: 5 requests available per month</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="regularization" className="space-y-4">
+                <Button 
+                  onClick={handleRegularization}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Request Attendance Regularization
+                </Button>
+                <div className="text-sm text-gray-600">
+                  <p>• You can request up to 5 regularizations per month</p>
+                  <p>• Regularization requests require manager approval</p>
+                  <p>• Minimum work duration: 3 hours 45 minutes</p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="leaves" className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="text-xl font-bold text-green-600">{leaveBalance.casual}</div>
+                    <div className="text-xs text-gray-600">Casual Leave</div>
+                  </div>
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="text-xl font-bold text-blue-600">{leaveBalance.sick}</div>
+                    <div className="text-xs text-gray-600">Sick Leave</div>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <div className="text-xl font-bold text-purple-600">{leaveBalance.annual}</div>
+                    <div className="text-xs text-gray-600">Annual Leave</div>
+                  </div>
+                  <div className="text-center p-3 bg-orange-50 rounded-lg">
+                    <div className="text-xl font-bold text-orange-600">{leaveBalance.personal}</div>
+                    <div className="text-xs text-gray-600">Personal Leave</div>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={() => setShowLeaveForm(true)}
+                  className="w-full mb-4"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Apply for Leave
+                </Button>
+
+                {showLeaveForm && (
+                  <Card className="border-2 border-dashed">
+                    <CardHeader>
+                      <CardTitle>Apply for Leave</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <Label htmlFor="leaveType">Leave Type</Label>
+                        <select 
+                          className="w-full p-2 border rounded-md"
+                          value={leaveType}
+                          onChange={(e) => setLeaveType(e.target.value)}
+                        >
+                          <option value="">Select leave type</option>
+                          <option value="Casual">Casual Leave</option>
+                          <option value="Sick">Sick Leave</option>
+                          <option value="Annual">Annual Leave</option>
+                          <option value="Personal">Personal Leave</option>
+                        </select>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="fromDate">From Date</Label>
+                          <Input
+                            type="date"
+                            value={leaveFromDate}
+                            onChange={(e) => setLeaveFromDate(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="toDate">To Date</Label>
+                          <Input
+                            type="date"
+                            value={leaveToDate}
+                            onChange={(e) => setLeaveToDate(e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="reason">Reason</Label>
+                        <Textarea
+                          value={leaveReason}
+                          onChange={(e) => setLeaveReason(e.target.value)}
+                          placeholder="Enter reason for leave"
+                        />
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button onClick={handleLeaveApplication} className="flex-1">
+                          Submit Application
+                        </Button>
+                        <Button variant="outline" onClick={() => setShowLeaveForm(false)} className="flex-1">
+                          Cancel
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <div className="space-y-3">
+                  <h4 className="font-medium">Recent Leave Applications</h4>
+                  {leaveHistory.map((leave) => (
+                    <div key={leave.id} className="p-3 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-medium">{leave.type} Leave</p>
+                          <p className="text-sm text-gray-600">
+                            {new Date(leave.fromDate).toLocaleDateString()} - {new Date(leave.toDate).toLocaleDateString()} 
+                            ({leave.days} day{leave.days > 1 ? 's' : ''})
+                          </p>
+                        </div>
+                        <Badge variant={leave.status === 'Approved' ? 'default' : 'secondary'}>
+                          {leave.status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600">{leave.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
