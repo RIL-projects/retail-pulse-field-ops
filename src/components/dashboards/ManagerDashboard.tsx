@@ -267,11 +267,10 @@ const ManagerDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="approvals">Pending Approvals</TabsTrigger>
             <TabsTrigger value="attendance">Team Attendance</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
 
           <TabsContent value="approvals" className="space-y-6">
@@ -402,43 +401,6 @@ const ManagerDashboard = () => {
                       </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="reports" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Generate Reports</CardTitle>
-                <CardDescription>Download comprehensive reports for your team</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Flexible Attendance Report</div>
-                      <div className="text-sm text-gray-500">Hours-based attendance summary</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Sales Report</div>
-                      <div className="text-sm text-gray-500">Sales performance & approvals</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Regularization Report</div>
-                      <div className="text-sm text-gray-500">Attendance correction requests</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Travel Expense Report</div>
-                      <div className="text-sm text-gray-500">Manager expense claims summary</div>
-                    </div>
-                  </Button>
                 </div>
               </CardContent>
             </Card>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,6 @@ import { useNavigate } from "react-router-dom";
 import AttendanceFlow from '@/components/flows/AttendanceFlow';
 import SalesFlow from '@/components/flows/SalesFlow';
 import DisplayFlow from '@/components/flows/DisplayFlow';
-import PerformanceFlow from '@/components/flows/PerformanceFlow';
 import ExpenseClaimFlow from '@/components/flows/ExpenseClaimFlow';
 
 const AdminDashboard = () => {
@@ -94,7 +92,6 @@ const AdminDashboard = () => {
           {activeFlow === 'attendance' && <AttendanceFlow userRole="Admin" />}
           {activeFlow === 'sales' && <SalesFlow userRole="Admin" />}
           {activeFlow === 'display' && <DisplayFlow userRole="Admin" />}
-          {activeFlow === 'performance' && <PerformanceFlow userRole="Admin" />}
           {activeFlow === 'expenses' && <ExpenseClaimFlow userRole="Admin" />}
         </div>
       </div>
@@ -136,7 +133,7 @@ const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Admin Control Modules */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('attendance')}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -169,18 +166,6 @@ const AdminDashboard = () => {
                   <p className="text-sm text-gray-500 mt-1">Monitor all stores</p>
                 </div>
                 <Package className="w-8 h-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveFlow('performance')}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900">Performance Analytics</h3>
-                  <p className="text-sm text-gray-500 mt-1">System-wide reports</p>
-                </div>
-                <BarChart3 className="w-8 h-8 text-orange-600" />
               </div>
             </CardContent>
           </Card>
@@ -262,12 +247,11 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">System Overview</TabsTrigger>
             <TabsTrigger value="expenses">Expense Claims</TabsTrigger>
             <TabsTrigger value="attendance">Attendance Policies</TabsTrigger>
             <TabsTrigger value="users">User Management</TabsTrigger>
-            <TabsTrigger value="reports">System Reports</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -466,43 +450,6 @@ const AdminDashboard = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="reports" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>System Reports</CardTitle>
-                <CardDescription>Generate comprehensive system reports</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Expense Claims Report</div>
-                      <div className="text-sm text-gray-500">Manager travel expenses and approvals</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Attendance Analytics</div>
-                      <div className="text-sm text-gray-500">Flexible attendance policy impact</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Regularization Trends</div>
-                      <div className="text-sm text-gray-500">Usage patterns and approval rates</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">System Performance</div>
-                      <div className="text-sm text-gray-500">Overall FFA system metrics</div>
-                    </div>
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
