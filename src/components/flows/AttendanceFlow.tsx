@@ -51,7 +51,10 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
   };
 
   const handleRegularization = () => {
-    setShowRegularization(true);
+    // Only allow ISD and Manager roles to access regularization
+    if (userRole === 'ISD' || userRole === 'Manager') {
+      setShowRegularization(true);
+    }
   };
 
   const handleGeofencedCheckin = () => {
@@ -222,7 +225,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
     return 'text-red-600';
   };
 
-  if (showRegularization) {
+  if (showRegularization && (userRole === 'ISD' || userRole === 'Manager')) {
     return (
       <div className="space-y-4">
         <Button 
