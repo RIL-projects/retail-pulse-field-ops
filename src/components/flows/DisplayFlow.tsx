@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,10 +76,22 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
           <CardContent>
             <Tabs defaultValue="current" className="space-y-4">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="current">Current Display</TabsTrigger>
-                <TabsTrigger value="update">Update Display</TabsTrigger>
-                <TabsTrigger value="competitors">Competitors</TabsTrigger>
-                <TabsTrigger value="history">History</TabsTrigger>
+                <TabsTrigger value="current">
+                  <span className="md:hidden">Current</span>
+                  <span className="hidden md:inline">Current Display</span>
+                </TabsTrigger>
+                <TabsTrigger value="update">
+                  <span className="md:hidden">Update</span>
+                  <span className="hidden md:inline">Update Display</span>
+                </TabsTrigger>
+                <TabsTrigger value="competitors">
+                  <span className="md:hidden">Rivals</span>
+                  <span className="hidden md:inline">Competitors</span>
+                </TabsTrigger>
+                <TabsTrigger value="history">
+                  <span className="md:hidden">History</span>
+                  <span className="hidden md:inline">History</span>
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="current" className="space-y-4">
@@ -286,9 +297,18 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
           <CardContent>
             <Tabs defaultValue="compliance" className="space-y-4">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="compliance">Store Compliance</TabsTrigger>
-                <TabsTrigger value="gaps">Gap Analysis</TabsTrigger>
-                <TabsTrigger value="trends">Trends</TabsTrigger>
+                <TabsTrigger value="compliance">
+                  <span className="md:hidden">Compliance</span>
+                  <span className="hidden md:inline">Store Compliance</span>
+                </TabsTrigger>
+                <TabsTrigger value="gaps">
+                  <span className="md:hidden">Gaps</span>
+                  <span className="hidden md:inline">Gap Analysis</span>
+                </TabsTrigger>
+                <TabsTrigger value="trends">
+                  <span className="md:hidden">Trends</span>
+                  <span className="hidden md:inline">Trends</span>
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="compliance" className="space-y-4">
@@ -460,10 +480,22 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
         <CardContent>
           <Tabs defaultValue="norms" className="space-y-4">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="norms">Display Norms</TabsTrigger>
-              <TabsTrigger value="stores">Store Profiles</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
+              <TabsTrigger value="norms">
+                <span className="md:hidden">Norms</span>
+                <span className="hidden md:inline">Display Norms</span>
+              </TabsTrigger>
+              <TabsTrigger value="stores">
+                <span className="md:hidden">Stores</span>
+                <span className="hidden md:inline">Store Profiles</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics">
+                <span className="md:hidden">Analytics</span>
+                <span className="hidden md:inline">Analytics</span>
+              </TabsTrigger>
+              <TabsTrigger value="reports">
+                <span className="md:hidden">Reports</span>
+                <span className="hidden md:inline">Reports</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="norms" className="space-y-4">
