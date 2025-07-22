@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -102,6 +103,18 @@ const ISDDashboard = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
+                <div className={`grid ${isCheckedIn ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-gray-600">Check In:</span>
+                    <span className="font-medium">{isCheckedIn ? "09:00 AM" : "-"}</span>
+                  </div>
+                  {isCheckedIn && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-600">Expected Check Out:</span>
+                      <span className="font-medium">06:30 PM</span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   {isCheckedIn ? (
                     <UserCheck className="w-5 h-5 text-green-600" />
@@ -149,6 +162,18 @@ const ISDDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <div className={`grid ${isCheckedIn ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-600">Check In:</span>
+                  <span className="font-medium">{isCheckedIn ? "09:00 AM" : "-"}</span>
+                </div>
+                {isCheckedIn && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-gray-600">Expected Check Out:</span>
+                    <span className="font-medium">06:30 PM</span>
+                  </div>
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 {isCheckedIn ? (
                   <UserCheck className="w-5 h-5 text-green-600" />
