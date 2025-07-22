@@ -256,9 +256,18 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
           <CardContent>
             <Tabs defaultValue="checkin" className="space-y-4">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="checkin">Check In/Out</TabsTrigger>
-                <TabsTrigger value="regularization">Regularization</TabsTrigger>
-                <TabsTrigger value="leaves">Leave Management</TabsTrigger>
+                <TabsTrigger value="checkin">
+                  <span className="md:hidden">Check</span>
+                  <span className="hidden md:inline">Check In/Out</span>
+                </TabsTrigger>
+                <TabsTrigger value="regularization">
+                  <span className="md:hidden">Regular</span>
+                  <span className="hidden md:inline">Regularization</span>
+                </TabsTrigger>
+                <TabsTrigger value="leaves">
+                  <span className="md:hidden">Leaves</span>
+                  <span className="hidden md:inline">Leave Management</span>
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="checkin" className="space-y-4">
@@ -501,8 +510,14 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
       <div className="space-y-6">
         <Tabs defaultValue="attendance" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="attendance">Team Attendance</TabsTrigger>
-            <TabsTrigger value="regularizations">Regularization Requests</TabsTrigger>
+            <TabsTrigger value="attendance">
+              <span className="md:hidden">Attendance</span>
+              <span className="hidden md:inline">Team Attendance</span>
+            </TabsTrigger>
+            <TabsTrigger value="regularizations">
+              <span className="md:hidden">Requests</span>
+              <span className="hidden md:inline">Regularization Requests</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="attendance" className="space-y-6">
