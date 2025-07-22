@@ -74,15 +74,15 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
             <CardDescription>Track product displays and competitor presence</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="current" className="space-y-4">
+            <Tabs defaultValue="update" className="space-y-4">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="current">
-                  <span className="md:hidden">Current</span>
-                  <span className="hidden md:inline">Current Display</span>
-                </TabsTrigger>
                 <TabsTrigger value="update">
                   <span className="md:hidden">Update</span>
                   <span className="hidden md:inline">Update Display</span>
+                </TabsTrigger>
+                <TabsTrigger value="current">
+                  <span className="md:hidden">Current</span>
+                  <span className="hidden md:inline">Current Display</span>
                 </TabsTrigger>
                 <TabsTrigger value="competitors">
                   <span className="md:hidden">Rivals</span>
@@ -93,54 +93,6 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
                   <span className="hidden md:inline">History</span>
                 </TabsTrigger>
               </TabsList>
-
-              <TabsContent value="current" className="space-y-4">
-                <div className="space-y-4">
-                  {displayData.map((item, index) => (
-                    <Card key={index}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="font-medium">{item.category}</h3>
-                          <Badge variant={item.compliance >= 80 ? 'default' : item.compliance >= 60 ? 'secondary' : 'destructive'}>
-                            {item.compliance}% Compliant
-                          </Badge>
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-600">{item.current}</div>
-                            <div className="text-sm text-gray-600">Current SKUs</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-gray-600">{item.norm}</div>
-                            <div className="text-sm text-gray-600">Required</div>
-                          </div>
-                          <div className="text-center">
-                            <div className={`text-2xl font-bold ${item.current >= item.norm ? 'text-green-600' : 'text-red-600'}`}>
-                              {item.current - item.norm}
-                            </div>
-                            <div className="text-sm text-gray-600">Gap</div>
-                          </div>
-                        </div>
-                        <div className="mt-3 pt-3 border-t">
-                          <p className="text-sm text-gray-600">Display Location: {item.location}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <div className="flex items-start gap-3">
-                    <TrendingUp className="w-5 h-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-blue-900">Gap Analysis</p>
-                      <p className="text-sm text-blue-700">
-                        You need to add 2 more TV models and 1 AC model to meet display norms.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
 
               <TabsContent value="update" className="space-y-4">
                 {!showDisplayForm ? (
@@ -222,6 +174,54 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
                     </CardContent>
                   </Card>
                 )}
+              </TabsContent>
+
+              <TabsContent value="current" className="space-y-4">
+                <div className="space-y-4">
+                  {displayData.map((item, index) => (
+                    <Card key={index}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-medium">{item.category}</h3>
+                          <Badge variant={item.compliance >= 80 ? 'default' : item.compliance >= 60 ? 'secondary' : 'destructive'}>
+                            {item.compliance}% Compliant
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-blue-600">{item.current}</div>
+                            <div className="text-sm text-gray-600">Current SKUs</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-gray-600">{item.norm}</div>
+                            <div className="text-sm text-gray-600">Required</div>
+                          </div>
+                          <div className="text-center">
+                            <div className={`text-2xl font-bold ${item.current >= item.norm ? 'text-green-600' : 'text-red-600'}`}>
+                              {item.current - item.norm}
+                            </div>
+                            <div className="text-sm text-gray-600">Gap</div>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t">
+                          <p className="text-sm text-gray-600">Display Location: {item.location}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <TrendingUp className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-blue-900">Gap Analysis</p>
+                      <p className="text-sm text-blue-700">
+                        You need to add 2 more TV models and 1 AC model to meet display norms.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="competitors" className="space-y-4">
