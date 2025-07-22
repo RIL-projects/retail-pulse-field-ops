@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,9 @@ import {
   Trophy,
   ShoppingCart,
   FileText,
-  BarChart3
+  BarChart3,
+  UserCheck,
+  UserX
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -94,9 +97,14 @@ const ISDDashboard = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <Badge variant={isCheckedIn ? "default" : "secondary"}>
-                  {attendanceStatus}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {isCheckedIn ? (
+                    <UserCheck className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <UserX className="w-5 h-5 text-red-600" />
+                  )}
+                  <span className="text-sm text-gray-600">{attendanceStatus}</span>
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
@@ -137,9 +145,14 @@ const ISDDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={isCheckedIn ? "default" : "secondary"}>
-                {attendanceStatus}
-              </Badge>
+              <div className="flex items-center gap-2">
+                {isCheckedIn ? (
+                  <UserCheck className="w-5 h-5 text-green-600" />
+                ) : (
+                  <UserX className="w-5 h-5 text-red-600" />
+                )}
+                <span className="text-sm text-gray-600">{attendanceStatus}</span>
+              </div>
               <Button
                 variant="outline"
                 size="sm"
