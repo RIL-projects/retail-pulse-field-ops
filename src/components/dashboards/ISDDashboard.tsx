@@ -66,7 +66,11 @@ const ISDDashboard = () => {
     });
   };
 
-  // Mock data
+  const getFirstName = (fullName: string | undefined) => {
+    if (!fullName) return '';
+    return fullName.split(' ')[0];
+  };
+
   const salesData = {
     target: 100000,
     achieved: 65000,
@@ -91,8 +95,8 @@ const ISDDashboard = () => {
                   ← Back to Dashboard
                 </Button>
                 <div>
-                  <h1 className="text-lg font-semibold text-gray-900">Welcome, {user?.name}</h1>
-                  <p className="text-sm text-gray-500">{user?.description}</p>
+                  <h1 className="text-base font-semibold text-gray-900">Welcome, {getFirstName(user?.name)}</h1>
+                  <p className="text-xs text-gray-500">{user?.description}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
@@ -138,8 +142,8 @@ const ISDDashboard = () => {
                 <Clock className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Welcome, {user?.name}</h1>
-                <p className="text-sm text-gray-500">{user?.description}</p>
+                <h1 className="text-base font-semibold text-gray-900">Welcome, {getFirstName(user?.name)}</h1>
+                <p className="text-xs text-gray-500">{user?.description}</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
