@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -103,7 +102,6 @@ const ISDDashboard = () => {
                   ) : (
                     <UserX className="w-5 h-5 text-red-600" />
                   )}
-                  <span className="text-sm text-gray-600">{attendanceStatus}</span>
                 </div>
                 <Button
                   variant="outline"
@@ -151,7 +149,6 @@ const ISDDashboard = () => {
                 ) : (
                   <UserX className="w-5 h-5 text-red-600" />
                 )}
-                <span className="text-sm text-gray-600">{attendanceStatus}</span>
               </div>
               <Button
                 variant="outline"
