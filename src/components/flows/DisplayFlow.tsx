@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -295,15 +296,11 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
             <CardDescription>Monitor store display compliance and performance</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="compliance" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="compliance">
-                  <span className="md:hidden">Compliance</span>
-                  <span className="hidden md:inline">Store Compliance</span>
-                </TabsTrigger>
-                <TabsTrigger value="gaps">
-                  <span className="md:hidden">Gaps</span>
-                  <span className="hidden md:inline">Gap Analysis</span>
+            <Tabs defaultValue="analysis" className="space-y-4">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="analysis">
+                  <span className="md:hidden">Analysis</span>
+                  <span className="hidden md:inline">Display Analysis</span>
                 </TabsTrigger>
                 <TabsTrigger value="trends">
                   <span className="md:hidden">Trends</span>
@@ -311,56 +308,62 @@ const DisplayFlow: React.FC<DisplayFlowProps> = ({ userRole }) => {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="compliance" className="space-y-4">
-                <div className="grid grid-cols-4 gap-4 mb-6">
-                  <div className="text-center p-3 bg-green-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">2</div>
-                    <div className="text-sm text-gray-600">Fully Compliant</div>
+              <TabsContent value="analysis" className="space-y-6">
+                {/* Store Compliance Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Store Compliance Overview</h3>
+                  
+                  <div className="grid grid-cols-4 gap-4 mb-6">
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">2</div>
+                      <div className="text-sm text-gray-600">Fully Compliant</div>
+                    </div>
+                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                      <div className="text-2xl font-bold text-yellow-600">1</div>
+                      <div className="text-sm text-gray-600">Partially Compliant</div>
+                    </div>
+                    <div className="text-center p-3 bg-red-50 rounded-lg">
+                      <div className="text-2xl font-bold text-red-600">1</div>
+                      <div className="text-sm text-gray-600">Non-Compliant</div>
+                    </div>
+                    <div className="text-center p-3 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">87%</div>
+                      <div className="text-sm text-gray-600">Avg Compliance</div>
+                    </div>
                   </div>
-                  <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-600">1</div>
-                    <div className="text-sm text-gray-600">Partially Compliant</div>
-                  </div>
-                  <div className="text-center p-3 bg-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-red-600">1</div>
-                    <div className="text-sm text-gray-600">Non-Compliant</div>
-                  </div>
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">87%</div>
-                    <div className="text-sm text-gray-600">Avg Compliance</div>
-                  </div>
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Store Name</TableHead>
+                        <TableHead>Overall</TableHead>
+                        <TableHead>TV</TableHead>
+                        <TableHead>Refrigerator</TableHead>
+                        <TableHead>AC</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {storeCompliance.map((store, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{store.store}</TableCell>
+                          <TableCell>
+                            <Badge variant={store.overall >= 90 ? 'default' : store.overall >= 75 ? 'secondary' : 'destructive'}>
+                              {store.overall}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{store.tv}%</TableCell>
+                          <TableCell>{store.ref}%</TableCell>
+                          <TableCell>{store.ac}%</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
 
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Store Name</TableHead>
-                      <TableHead>Overall</TableHead>
-                      <TableHead>TV</TableHead>
-                      <TableHead>Refrigerator</TableHead>
-                      <TableHead>AC</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {storeCompliance.map((store, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">{store.store}</TableCell>
-                        <TableCell>
-                          <Badge variant={store.overall >= 90 ? 'default' : store.overall >= 75 ? 'secondary' : 'destructive'}>
-                            {store.overall}%
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{store.tv}%</TableCell>
-                        <TableCell>{store.ref}%</TableCell>
-                        <TableCell>{store.ac}%</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-
-              <TabsContent value="gaps" className="space-y-4">
-                <div className="space-y-4">
+                {/* Gap Analysis Section */}
+                <div className="space-y-4 pt-6 border-t">
+                  <h3 className="text-lg font-medium">Gap Analysis</h3>
+                  
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-base flex items-center gap-2">
