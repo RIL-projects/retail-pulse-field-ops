@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,8 @@ import {
   FileText,
   BarChart3,
   UserCheck,
-  UserX
+  UserX,
+  ArrowLeft
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -91,8 +93,9 @@ const ISDDashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
-                <Button variant="outline" size="sm" onClick={() => setActiveFlow(null)}>
-                  ← Back to Dashboard
+                <Button variant="outline" size="sm" onClick={() => setActiveFlow(null)} className="flex items-center gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="hidden md:inline">Back to Dashboard</span>
                 </Button>
                 <div>
                   <h1 className="text-base font-semibold text-gray-900">Welcome, {getFirstName(user?.name)}</h1>
