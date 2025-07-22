@@ -38,6 +38,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [leaveType, setLeaveType] = useState('');
   const [leaveReason, setLeaveReason] = useState('');
   const [leaveFromDate, setLeaveFromDate] = useState('');
@@ -82,7 +83,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
           setShowCamera(true);
           toast({
             title: "Location Verified",
-            description: "You are within the store premises. Please take a selfie to check in.",
+            description: `You are within the store premises. Please take a selfie to ${isCheckedIn ? 'check out' : 'check in'}.`,
           });
         } else {
           toast({
@@ -105,9 +106,10 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
   const handleSelfieCapture = () => {
     // Simulate selfie capture
     setShowCamera(false);
+    setIsCheckedIn(!isCheckedIn);
     toast({
-      title: "Attendance Marked",
-      description: "Selfie captured successfully. You have been checked in!",
+      title: isCheckedIn ? "Checked Out Successfully" : "Checked In Successfully",
+      description: `Selfie captured successfully. You have been ${isCheckedIn ? 'checked out' : 'checked in'}!`,
     });
   };
 
@@ -289,17 +291,19 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">Today's Status</h3>
-                    <Badge className="bg-green-100 text-green-800">Present</Badge>
+                    <Badge className={isCheckedIn ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}>
+                      {isCheckedIn ? "Checked In" : "Not Checked In"}
+                    </Badge>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 border rounded-lg">
                       <div className="text-sm text-gray-600">Check In</div>
-                      <div className="text-lg font-semibold">09:00 AM</div>
+                      <div className="text-lg font-semibold">{isCheckedIn ? "09:00 AM" : "-"}</div>
                     </div>
                     <div className="p-4 border rounded-lg">
-                      <div className="text-sm text-gray-600">Expected Check Out</div>
-                      <div className="text-lg font-semibold">06:30 PM</div>
+                      <div className="text-sm text-gray-600">{isCheckedIn ? "Check Out" : "Expected Check Out"}</div>
+                      <div className="text-lg font-semibold">{isCheckedIn ? "-" : "06:30 PM"}</div>
                     </div>
                   </div>
 
@@ -308,7 +312,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-base">
                         <Camera className="w-5 h-5" />
-                        Geofenced Selfie Check-in
+                        Geofenced Selfie {isCheckedIn ? "Check-out" : "Check-in"}
                       </CardTitle>
                       <CardDescription>
                         Use location and selfie verification to mark attendance
@@ -346,7 +350,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                       ) : (
                         <Button onClick={handleGeofencedCheckin} className="w-full">
                           <MapPin className="w-4 h-4 mr-2" />
-                          Start Geofenced Check-in
+                          Start {isCheckedIn ? "Check-out" : "Check-in"}
                         </Button>
                       )}
                     </CardContent>
