@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +19,12 @@ import {
   Upload,
   Target,
   TrendingUp,
-  Filter
+  Filter,
+  Plus,
+  Minus,
+  Edit,
+  Archive,
+  Trash2
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -28,15 +32,62 @@ interface SalesFlowProps {
   userRole: 'ISD' | 'Manager' | 'Admin';
 }
 
+interface ProductLineItem {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  serialNumbers: string[];
+}
+
+interface SalesHistoryItem {
+  id: string;
+  invoice: string;
+  products: Array<{
+    name: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
+  totalValue: number;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  date: string;
+}
+
 const SalesFlow: React.FC<SalesFlowProps> = ({ userRole }) => {
   const [showSalesForm, setShowSalesForm] = useState(false);
-  const [serialNumbers, setSerialNumbers] = useState<string[]>(['']);
+  const [productLines, setProductLines] = useState<ProductLineItem[]>([
+    {
+      id: '1',
+      productId: '',
+      productName: '',
+      quantity: 1,
+      unitPrice: 0,
+      serialNumbers: ['']
+    }
+  ]);
+  const [swipedInvoice, setSwipedInvoice] = useState<string | null>(null);
+
+  const products = [
+    { id: 'tv55', name: 'Samsung TV 55" QLED', price: 85000 },
+    { id: 'ref260', name: 'LG Refrigerator 260L', price: 45000 },
+    { id: 'ac15', name: 'Whirlpool AC 1.5 Ton', price: 35000 }
+  ];
 
   const handleSalesSubmission = () => {
+    const totalValue = productLines.reduce((sum, line) => sum + (line.quantity * line.unitPrice), 0);
     setShowSalesForm(false);
+    setProductLines([{
+      id: '1',
+      productId: '',
+      productName: '',
+      quantity: 1,
+      unitPrice: 0,
+      serialNumbers: ['']
+    }]);
     toast({
       title: "Sales Entry Submitted",
-      description: "Your sales entry is pending manager approval.",
+      description: `Invoice with ${productLines.length} product(s) worth ₹${totalValue.toLocaleString()} is pending manager approval.`,
     });
   };
 
@@ -47,25 +98,124 @@ const SalesFlow: React.FC<SalesFlowProps> = ({ userRole }) => {
     });
   };
 
-  const addSerialNumber = () => {
-    setSerialNumbers([...serialNumbers, '']);
+  const addProductLine = () => {
+    const newId = (productLines.length + 1).toString();
+    setProductLines([...productLines, {
+      id: newId,
+      productId: '',
+      productName: '',
+      quantity: 1,
+      unitPrice: 0,
+      serialNumbers: ['']
+    }]);
   };
 
-  const updateSerialNumber = (index: number, value: string) => {
-    const updated = [...serialNumbers];
-    updated[index] = value;
-    setSerialNumbers(updated);
+  const removeProductLine = (id: string) => {
+    if (productLines.length > 1) {
+      setProductLines(productLines.filter(line => line.id !== id));
+    }
   };
 
-  // Mock data
-  const salesHistory = [
-    { id: '1', invoice: 'INV001', product: 'Samsung TV 55"', quantity: 1, value: 85000, status: 'Pending', date: '2024-01-15' },
-    { id: '2', invoice: 'INV002', product: 'LG Refrigerator', quantity: 1, value: 45000, status: 'Approved', date: '2024-01-14' },
-    { id: '3', invoice: 'INV003', product: 'Sony Headphones', quantity: 2, value: 15000, status: 'Rejected', date: '2024-01-13' }
+  const updateProductLine = (id: string, field: keyof ProductLineItem, value: any) => {
+    setProductLines(productLines.map(line => {
+      if (line.id === id) {
+        const updated = { ...line, [field]: value };
+        
+        if (field === 'productId' && value) {
+          const product = products.find(p => p.id === value);
+          if (product) {
+            updated.productName = product.name;
+            updated.unitPrice = product.price;
+          }
+        }
+        
+        if (field === 'quantity') {
+          const newQuantity = parseInt(value) || 1;
+          updated.quantity = newQuantity;
+          // Adjust serial numbers array to match quantity
+          const currentSerials = updated.serialNumbers;
+          if (newQuantity > currentSerials.length) {
+            updated.serialNumbers = [...currentSerials, ...Array(newQuantity - currentSerials.length).fill('')];
+          } else {
+            updated.serialNumbers = currentSerials.slice(0, newQuantity);
+          }
+        }
+        
+        return updated;
+      }
+      return line;
+    }));
+  };
+
+  const updateSerialNumber = (lineId: string, serialIndex: number, value: string) => {
+    setProductLines(productLines.map(line => {
+      if (line.id === lineId) {
+        const updatedSerials = [...line.serialNumbers];
+        updatedSerials[serialIndex] = value;
+        return { ...line, serialNumbers: updatedSerials };
+      }
+      return line;
+    }));
+  };
+
+  const handleInvoiceSwipe = (invoiceId: string) => {
+    setSwipedInvoice(swipedInvoice === invoiceId ? null : invoiceId);
+  };
+
+  const handleEditInvoice = (invoiceId: string) => {
+    toast({
+      title: "Edit Invoice",
+      description: `Opening editor for invoice ${invoiceId}`,
+    });
+    setSwipedInvoice(null);
+  };
+
+  const handleArchiveInvoice = (invoiceId: string) => {
+    toast({
+      title: "Invoice Archived",
+      description: `Invoice ${invoiceId} has been archived`,
+    });
+    setSwipedInvoice(null);
+  };
+
+  // Updated mock data with multiple products
+  const salesHistory: SalesHistoryItem[] = [
+    { 
+      id: '1', 
+      invoice: 'INV001', 
+      products: [
+        { name: 'Samsung TV 55"', quantity: 1, unitPrice: 85000 },
+        { name: 'Sony Headphones', quantity: 2, unitPrice: 7500 }
+      ], 
+      totalValue: 100000, 
+      status: 'Pending', 
+      date: '2024-01-15' 
+    },
+    { 
+      id: '2', 
+      invoice: 'INV002', 
+      products: [
+        { name: 'LG Refrigerator', quantity: 1, unitPrice: 45000 }
+      ], 
+      totalValue: 45000, 
+      status: 'Approved', 
+      date: '2024-01-14' 
+    },
+    { 
+      id: '3', 
+      invoice: 'INV003', 
+      products: [
+        { name: 'Whirlpool AC', quantity: 2, unitPrice: 35000 },
+        { name: 'Samsung TV 55"', quantity: 1, unitPrice: 85000 }
+      ], 
+      totalValue: 155000, 
+      status: 'Rejected', 
+      date: '2024-01-13' 
+    }
   ];
 
   const pendingSales = [
-    { id: '1', isd: 'Rahul Kumar', invoice: 'INV001', product: 'Samsung TV 55"', quantity: 1, value: 85000, date: '2024-01-15' },
+    { id: '1', isd: 'Rahul Kumar', invoice: 'INV001', product: 'Samsung TV 55" + 1 more', quantity: 3, value: 100000, date: '2024-01-15' },
     { id: '2', isd: 'Sunita Devi', invoice: 'INV004', product: 'Whirlpool AC', quantity: 1, value: 35000, date: '2024-01-15' }
   ];
 
@@ -122,48 +272,108 @@ const SalesFlow: React.FC<SalesFlowProps> = ({ userRole }) => {
                         </div>
                       </div>
 
-                      <div>
-                        <Label htmlFor="product">Product</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select product" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="tv55">Samsung TV 55" QLED</SelectItem>
-                            <SelectItem value="ref260">LG Refrigerator 260L</SelectItem>
-                            <SelectItem value="ac15">Whirlpool AC 1.5 Ton</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="quantity">Quantity</Label>
-                          <Input type="number" placeholder="Enter quantity" min="1" />
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-base font-medium">Product Line Items</Label>
+                          <Button variant="outline" size="sm" onClick={addProductLine}>
+                            <Plus className="w-4 h-4 mr-1" />
+                            Add Product
+                          </Button>
                         </div>
-                        <div>
-                          <Label htmlFor="value">Sales Value (₹)</Label>
-                          <Input type="number" placeholder="Enter amount" />
-                        </div>
-                      </div>
 
-                      <div>
-                        <Label>Serial Numbers</Label>
-                        {serialNumbers.map((serial, index) => (
-                          <div key={index} className="flex gap-2 mt-2">
-                            <Input
-                              placeholder="Enter serial number"
-                              value={serial}
-                              onChange={(e) => updateSerialNumber(index, e.target.value)}
-                            />
-                            <Button variant="outline" size="sm">
-                              <Scan className="w-4 h-4" />
-                            </Button>
-                          </div>
+                        {productLines.map((line, index) => (
+                          <Card key={line.id} className="p-4">
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Product {index + 1}</h4>
+                                {productLines.length > 1 && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => removeProductLine(line.id)}
+                                  >
+                                    <Minus className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <Label>Product</Label>
+                                  <Select 
+                                    value={line.productId} 
+                                    onValueChange={(value) => updateProductLine(line.id, 'productId', value)}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select product" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {products.map(product => (
+                                        <SelectItem key={product.id} value={product.id}>
+                                          {product.name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div>
+                                  <Label>Quantity</Label>
+                                  <Input 
+                                    type="number" 
+                                    value={line.quantity}
+                                    onChange={(e) => updateProductLine(line.id, 'quantity', e.target.value)}
+                                    min="1" 
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Unit Price (₹)</Label>
+                                  <Input 
+                                    type="number" 
+                                    value={line.unitPrice}
+                                    onChange={(e) => updateProductLine(line.id, 'unitPrice', parseInt(e.target.value) || 0)}
+                                  />
+                                </div>
+                              </div>
+
+                              {line.productId && (
+                                <div>
+                                  <Label>Serial Numbers ({line.quantity} required)</Label>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                                    {line.serialNumbers.map((serial, serialIndex) => (
+                                      <div key={serialIndex} className="flex gap-2">
+                                        <Input
+                                          placeholder={`Serial #${serialIndex + 1}`}
+                                          value={serial}
+                                          onChange={(e) => updateSerialNumber(line.id, serialIndex, e.target.value)}
+                                        />
+                                        <Button variant="outline" size="sm">
+                                          <Scan className="w-4 h-4" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {line.productId && (
+                                <div className="bg-gray-50 p-3 rounded">
+                                  <p className="text-sm font-medium">
+                                    Line Total: ₹{(line.quantity * line.unitPrice).toLocaleString()}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </Card>
                         ))}
-                        <Button variant="outline" size="sm" onClick={addSerialNumber} className="mt-2">
-                          Add Serial Number
-                        </Button>
+
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">Invoice Total:</span>
+                            <span className="text-lg font-bold">
+                              ₹{productLines.reduce((sum, line) => sum + (line.quantity * line.unitPrice), 0).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
                       <div>
@@ -202,32 +412,67 @@ const SalesFlow: React.FC<SalesFlowProps> = ({ userRole }) => {
 
                 <div className="space-y-3">
                   {salesHistory.map((sale) => (
-                    <Card key={sale.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-medium">{sale.invoice}</p>
-                              <Badge variant={
-                                sale.status === 'Approved' ? 'default' : 
-                                sale.status === 'Pending' ? 'secondary' : 'destructive'
-                              }>
-                                {sale.status}
-                              </Badge>
+                    <div key={sale.id} className="relative">
+                      <Card 
+                        className={`transition-transform duration-200 ${
+                          swipedInvoice === sale.id ? 'transform translate-x-[-120px]' : ''
+                        }`}
+                        onClick={() => handleInvoiceSwipe(sale.id)}
+                      >
+                        <CardContent className="p-4 cursor-pointer">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-medium">{sale.invoice}</p>
+                                <Badge variant={
+                                  sale.status === 'Approved' ? 'default' : 
+                                  sale.status === 'Pending' ? 'secondary' : 'destructive'
+                                }>
+                                  {sale.status}
+                                </Badge>
+                              </div>
+                              <div className="space-y-1">
+                                {sale.products.map((product, index) => (
+                                  <p key={index} className="text-sm text-gray-600">
+                                    {product.name} - Qty: {product.quantity} × ₹{product.unitPrice.toLocaleString()}
+                                  </p>
+                                ))}
+                              </div>
+                              <p className="text-sm font-medium text-gray-800 mt-1">
+                                Total: ₹{sale.totalValue.toLocaleString()} • {sale.date}
+                              </p>
                             </div>
-                            <p className="text-sm text-gray-600">{sale.product}</p>
-                            <p className="text-sm text-gray-600">
-                              Qty: {sale.quantity} • Value: ₹{sale.value.toLocaleString()} • {sale.date}
-                            </p>
+                            <div className="text-right ml-4">
+                              {sale.status === 'Approved' && <CheckCircle className="w-5 h-5 text-green-500" />}
+                              {sale.status === 'Pending' && <Clock className="w-5 h-5 text-yellow-500" />}
+                              {sale.status === 'Rejected' && <XCircle className="w-5 h-5 text-red-500" />}
+                            </div>
                           </div>
-                          <div className="text-right">
-                            {sale.status === 'Approved' && <CheckCircle className="w-5 h-5 text-green-500" />}
-                            {sale.status === 'Pending' && <Clock className="w-5 h-5 text-yellow-500" />}
-                            {sale.status === 'Rejected' && <XCircle className="w-5 h-5 text-red-500" />}
-                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Swipe Actions */}
+                      {swipedInvoice === sale.id && (
+                        <div className="absolute right-0 top-0 h-full flex items-center">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditInvoice(sale.invoice)}
+                            className="mr-2 bg-blue-500 text-white border-blue-500 hover:bg-blue-600"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleArchiveInvoice(sale.invoice)}
+                            className="bg-gray-500 text-white border-gray-500 hover:bg-gray-600"
+                          >
+                            <Archive className="w-4 h-4" />
+                          </Button>
                         </div>
-                      </CardContent>
-                    </Card>
+                      )}
+                    </div>
                   ))}
                 </div>
               </TabsContent>
