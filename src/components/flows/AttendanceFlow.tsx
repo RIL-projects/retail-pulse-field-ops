@@ -306,7 +306,7 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                   {/* Geofenced Check-in Section */}
                   <Card className="border-2 border-dashed">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
                         <Camera className="w-5 h-5" />
                         Geofenced Selfie Check-in
                       </CardTitle>
