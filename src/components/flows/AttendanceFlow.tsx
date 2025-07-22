@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -296,15 +297,17 @@ const AttendanceFlow: React.FC<AttendanceFlowProps> = ({ userRole }) => {
                     </Badge>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className={`grid ${isCheckedIn ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
                     <div className="p-4 border rounded-lg">
                       <div className="text-sm text-gray-600">Check In</div>
                       <div className="text-lg font-semibold">{isCheckedIn ? "09:00 AM" : "-"}</div>
                     </div>
-                    <div className="p-4 border rounded-lg">
-                      <div className="text-sm text-gray-600">{isCheckedIn ? "Check Out" : "Expected Check Out"}</div>
-                      <div className="text-lg font-semibold">{isCheckedIn ? "-" : "06:30 PM"}</div>
-                    </div>
+                    {isCheckedIn && (
+                      <div className="p-4 border rounded-lg">
+                        <div className="text-sm text-gray-600">Expected Check Out</div>
+                        <div className="text-lg font-semibold">06:30 PM</div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Geofenced Check-in Section */}
