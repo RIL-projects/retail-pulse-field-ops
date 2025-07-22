@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -68,10 +67,9 @@ const PerformanceFlow: React.FC<PerformanceFlowProps> = ({ userRole }) => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="overview" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="categories">By Category</TabsTrigger>
-                <TabsTrigger value="trends">Trends</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-6">
@@ -161,45 +159,6 @@ const PerformanceFlow: React.FC<PerformanceFlowProps> = ({ userRole }) => {
                       </CardContent>
                     </Card>
                   ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="trends" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Sales Trend</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
-                      <div className="text-center">
-                        <BarChart3 className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-600">Sales trend chart would appear here</p>
-                        <p className="text-sm text-gray-500">Showing daily progress vs target pace</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">This Week</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold text-green-600">+12%</div>
-                      <p className="text-sm text-gray-600">vs last week</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Best Day</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-lg font-bold">₹15,000</div>
-                      <p className="text-sm text-gray-600">January 12th</p>
-                    </CardContent>
-                  </Card>
                 </div>
               </TabsContent>
             </Tabs>
