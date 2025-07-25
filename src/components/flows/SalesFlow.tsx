@@ -706,7 +706,7 @@ const SalesFlow: React.FC<SalesFlowProps> = ({ userRole }) => {
             <TabsContent value="targets" className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-medium">Sales Targets</h3>
-                <Button>Set New Targets</Button>
+                <Button onClick={() => window.location.href = '/user-targets'}>Set New Targets</Button>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
